@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ميركاتو العراق | أخبار الانتقالات</title>
+<link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4F2EA;--ink:#13261E;--mute:#5E6B64;--line:#D8D5C8;--card:#FFFFFF;--green:#0F5A3F;--red:#B3162B;--amber:#A86A00;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0C1F18;--ink:#EEF1EA;--mute:#9DB0A5;--line:#24402F;--card:#12291F;--green:#4FC08D;--red:#FF5A6E;--amber:#F0B34A}}
+:root[data-theme="dark"]{--bg:#0C1F18;--ink:#EEF1EA;--mute:#9DB0A5;--line:#24402F;--card:#12291F;--green:#4FC08D;--red:#FF5A6E;--amber:#F0B34A}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Tajawal',Tahoma,Arial,sans-serif;line-height:1.7}
+.wrap{max-width:760px;margin:0 auto;padding:0 18px}
+header{padding:34px 0 22px;border-bottom:3px solid var(--ink)}
+h1{font-family:'Lalezar','Tajawal',Tahoma,sans-serif;font-weight:400;font-size:clamp(3rem,13vw,5.5rem);line-height:1;margin:0;letter-spacing:0}
+h1 span{color:var(--green)}
+.tag{margin:10px 0 0;color:var(--mute);font-size:1.05rem}
+.bar{display:flex;gap:8px;flex-wrap:wrap;padding:16px 0}
+.chip{font:inherit;font-weight:500;background:transparent;color:var(--ink);border:1.5px solid var(--ink);border-radius:999px;padding:5px 16px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.chip:focus-visible{outline:3px solid var(--green);outline-offset:2px}
+.row{display:grid;grid-template-columns:6px 1fr;background:var(--card);border:1px solid var(--line);margin-bottom:10px;border-radius:4px;overflow:hidden}
+.row i{display:block}
+.official i{background:var(--green)}.talks i{background:var(--amber)}.rumor i{background:var(--red)}
+.body{padding:12px 16px}
+.top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.player{font-weight:700;font-size:1.2rem}
+.state{font-size:.85rem;font-weight:700}
+.official .state{color:var(--green)}.talks .state{color:var(--amber)}.rumor .state{color:var(--red)}
+.move{margin:2px 0 0;font-size:1.02rem}
+.move b{font-weight:500;color:var(--mute)}
+.note{margin:4px 0 0;color:var(--mute);font-size:.92rem}
+.empty{padding:30px 0;color:var(--mute);text-align:center}
+footer{margin:30px 0 40px;padding-top:16px;border-top:1px solid var(--line);color:var(--mute);font-size:.9rem}
+@media (prefers-reduced-motion:no-preference){.row{transition:transform .15s}.row:hover{transform:translateX(-3px)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<h1>ميركاتو <span>العراق</span></h1>
+<p class="tag">آخر أخبار انتقالات اللاعبين في الدوري العراقي والمنتخب</p>
+</header>
+<div class="bar" role="group" aria-label="تصفية الأخبار">
+<button class="chip" data-f="all" aria-pressed="true">الكل</button>
+<button class="chip" data-f="official" aria-pressed="false">رسمي</button>
+<button class="chip" data-f="talks" aria-pressed="false">مفاوضات</button>
+<button class="chip" data-f="rumor" aria-pressed="false">شائعات</button>
+</div>
+<main id="list"></main>
+<footer>الأخبار المعروضة حالياً أمثلة تجريبية لشكل الموقع، وسيتم استبدالها بأخبار حقيقية.</footer>
+</div>
+<script>
+// عدّل الأخبار من هنا: الحالة = official (رسمي) أو talks (مفاوضات) أو rumor (شائعات)
+const NEWS=[
+{p:"اسم اللاعب الأول",from:"نادي الشرطة",to:"نادي الزوراء",s:"official",n:"خبر تجريبي: تم توقيع العقد لموسمين."},
+{p:"اسم اللاعب الثاني",from:"القوة الجوية",to:"نادي الطلبة",s:"talks",n:"خبر تجريبي: المفاوضات بمراحلها الأخيرة."},
+{p:"اسم اللاعب الثالث",from:"نفط الوسط",to:"نادي دهوك",s:"rumor",n:"خبر تجريبي: أنباء غير مؤكدة عن اهتمام النادي."},
+{p:"اسم اللاعب الرابع",from:"نادي الكرخ",to:"القوة الجوية",s:"official",n:"خبر تجريبي: إعلان رسمي من النادي."}
+];
+const L={official:"رسمي",talks:"مفاوضات",rumor:"شائعة"};
+const list=document.getElementById("list");
+function esc(t){const d=document.createElement("div");d.textContent=t;return d.innerHTML}
+function render(f){
+const items=NEWS.filter(x=>f==="all"||x.s===f);
+list.innerHTML=items.length?items.map(x=>`<article class="row ${x.s}"><i></i><div class="body"><div class="top"><span class="player">${esc(x.p)}</span><span class="state">${L[x.s]}</span></div><p class="move"><b>من</b> ${esc(x.from)} <b>إلى</b> ${esc(x.to)}</p><p class="note">${esc(x.n)}</p></div></article>`).join(""):'<p class="empty">لا توجد أخبار في هذا القسم حالياً.</p>';
+}
+document.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{
+document.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c===b));
+render(b.dataset.f)}));
+render("all");
+</script>
+</body>
+</html>
